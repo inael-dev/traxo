@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { BottomNav } from "@/components/bottom-nav";
 import { getSessionHistory } from "@/lib/queries/history";
 import { WORKOUT_META } from "@/lib/data/types";

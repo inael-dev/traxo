@@ -77,8 +77,16 @@ export function WorkoutSession({ type, exercises, muscleGroups }: Props) {
         className="relative overflow-hidden pt-12 pb-10 px-5"
         style={{ backgroundColor: meta.accentColor }}
       >
+        {/* Foto de fundo */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={meta.imageUrl}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover opacity-35"
+          style={{ filter: "brightness(0.5)" }}
+        />
         <Mountain className="absolute bottom-0 left-0 right-0 w-full text-white" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent" />
 
         <div className="relative flex items-center justify-between mb-8">
           <Link
