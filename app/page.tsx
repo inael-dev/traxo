@@ -1,65 +1,172 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Dumbbell, ChevronRight } from "lucide-react";
+import { BottomNav } from "@/components/bottom-nav";
+import { getTodayWorkout, formatTodayDate } from "@/lib/workout-utils";
+import { countByWorkout } from "@/lib/data/exercises";
+import { WORKOUT_META } from "@/lib/data/types";
+import type { WorkoutType } from "@/lib/data/types";
 
-export default function Home() {
+const ALL_WORKOUTS: WorkoutType[] = ["A", "B", "C"];
+
+export default function HomePage() {
+  const todayWorkout = getTodayWorkout();
+  const dateStr = formatTodayDate();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex flex-col min-h-screen bg-background pb-20">
+      <header className="px-5 pt-12 pb-4">
+        <p className="text-muted-foreground text-sm">{dateStr}</p>
+        <h1 className="text-2xl font-black mt-0.5">Bom treino, Inael!</h1>
+      </header>
+
+      {/* Hoje */}
+      <section className="px-5 mt-2">
+        <h2 className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-3">
+          Hoje
+        </h2>
+
+        {todayWorkout ? (
+          <TodayCard type={todayWorkout} />
+        ) : (
+          <div className="rounded-[20px] bg-card border border-border p-6 text-center">
+            <p className="font-bold text-foreground">Dia de descanso</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              Aproveita para recuperar.
+            </p>
+          </div>
+        )}
+      </section>
+
+      {/* Treinos */}
+      <section className="px-5 mt-8">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
+            Nossa coleção
+          </h2>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="flex flex-col gap-3">
+          {ALL_WORKOUTS.map((type) => (
+            <WorkoutCard key={type} type={type} isToday={type === todayWorkout} />
+          ))}
         </div>
-      </main>
+      </section>
+
+      <BottomNav />
     </div>
+  );
+}
+
+function Mountain({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 375 130"
+      preserveAspectRatio="xMidYMax meet"
+      className={className}
+      aria-hidden
+    >
+      <path
+        d="M0,130 L55,72 L105,100 L165,38 L225,82 L285,48 L345,78 L375,62 L375,130 Z"
+        fill="currentColor"
+        opacity="0.4"
+      />
+      <path
+        d="M0,130 L85,88 L135,108 L195,60 L255,95 L315,65 L375,88 L375,130 Z"
+        fill="currentColor"
+        opacity="0.25"
+      />
+    </svg>
+  );
+}
+
+function TodayCard({ type }: { type: WorkoutType }) {
+  const meta = WORKOUT_META[type];
+  const count = countByWorkout(type);
+
+  return (
+    <Link href={`/workout/${type}`}>
+      <div
+        className="relative rounded-[20px] overflow-hidden h-48 active:scale-[0.98] transition-transform"
+        style={{ backgroundColor: meta.accentColor }}
+      >
+        <Mountain className="absolute bottom-0 left-0 right-0 w-full text-white" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent" />
+
+        <div className="absolute inset-0 p-5 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-white/80">
+              Treino {type} · hoje
+            </span>
+            <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center">
+              <ChevronRight size={16} className="text-white" />
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-2xl font-black text-white leading-tight">
+              {meta.muscleGroups.join(" & ")}
+            </h3>
+            <p className="text-white/70 text-sm mt-1.5 flex items-center gap-1.5">
+              <Dumbbell size={12} />
+              {count} exercícios
+            </p>
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+function WorkoutCard({ type, isToday }: { type: WorkoutType; isToday: boolean }) {
+  const meta = WORKOUT_META[type];
+  const count = countByWorkout(type);
+
+  return (
+    <Link href={`/workout/${type}`}>
+      <div
+        className="relative rounded-[16px] overflow-hidden h-[88px] flex items-stretch active:scale-[0.98] transition-transform border border-white/5"
+        style={{ backgroundColor: meta.accentColor + "20" }}
+      >
+        {/* Color accent bar */}
+        <div className="w-[3px] shrink-0" style={{ backgroundColor: meta.accentColor }} />
+
+        {/* Text content */}
+        <div className="flex items-center px-4 flex-1 min-w-0">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-0.5">
+              <span
+                className="text-[11px] font-bold uppercase tracking-widest"
+                style={{ color: meta.accentColor }}
+              >
+                Treino {type}
+              </span>
+              {isToday && (
+                <span
+                  className="text-[10px] font-bold px-1.5 py-0.5 rounded-full text-white"
+                  style={{ backgroundColor: meta.accentColor }}
+                >
+                  Hoje
+                </span>
+              )}
+            </div>
+            <h3 className="font-bold text-[15px] text-foreground leading-snug">
+              {meta.muscleGroups.join(" & ")}
+            </h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {count} exercícios
+            </p>
+          </div>
+          <ChevronRight size={15} className="text-muted-foreground shrink-0 ml-3" />
+        </div>
+
+        {/* Mountain decoration */}
+        <div
+          className="relative w-24 shrink-0 overflow-hidden"
+          style={{ color: meta.accentColor }}
+        >
+          <Mountain className="absolute bottom-0 right-0 h-full w-auto" />
+        </div>
+      </div>
+    </Link>
   );
 }
