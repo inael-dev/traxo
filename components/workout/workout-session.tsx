@@ -46,13 +46,15 @@ export function WorkoutSession({ type, exercises, muscleGroups }: Props) {
   const setSessionId = useGymStore((s) => s.setSessionId);
   const initWeights = useGymStore((s) => s.initWeights);
   const sessionId = useGymStore((s) => s.sessionId);
+  const activeWorkout = useGymStore((s) => s.activeWorkout);
   const totalCompleted = useGymStore((s) => s.totalCompletedInSession);
   const meta = WORKOUT_META[type];
 
   useEffect(() => {
+    getUserWeights().then(initWeights);
+    if (activeWorkout === type) return;
     startWorkout(type);
     createSession(type).then(setSessionId);
-    getUserWeights().then(initWeights);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type]);
 

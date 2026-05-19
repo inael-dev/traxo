@@ -11,6 +11,7 @@ import { BisetLabel } from "./biset-scheme";
 import type { Exercise, WorkoutType } from "@/lib/data/types";
 import { WORKOUT_META } from "@/lib/data/types";
 import { saveSet, removeSet, completeSession } from "@/lib/actions/sessions";
+import { getVideoUrl } from "@/lib/data/media";
 
 type Props = {
   type: WorkoutType;
@@ -25,6 +26,7 @@ export function ExerciseDetailPage({ type, exercises, currentIndex }: Props) {
   const prevEx = currentIndex > 0 ? exercises[currentIndex - 1] : null;
   const nextEx = currentIndex < exercises.length - 1 ? exercises[currentIndex + 1] : null;
   const isBiset = exercise.repsScheme.length > 1;
+  const videoUrl = getVideoUrl(exercise.id);
 
   const toggleSet = useGymStore((s) => s.toggleSet);
   const isCompleted = useGymStore((s) => s.isCompleted);
@@ -72,18 +74,25 @@ export function ExerciseDetailPage({ type, exercises, currentIndex }: Props) {
         </span>
       </header>
 
-      {/* GIF */}
+      {/* Media */}
       <div
-        className="relative w-full aspect-square bg-card overflow-hidden"
-        style={{ maxHeight: 320 }}
+        className={`relative w-full bg-black overflow-hidden ${videoUrl ? "aspect-[9/16] max-h-[480px]" : "aspect-square max-h-[320px]"}`}
       >
-        {exercise.gifUrl ? (
+        {videoUrl ? (
+          <video
+            src={videoUrl}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        ) : exercise.gifUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={exercise.gifUrl}
             alt={exercise.name}
             className="w-full h-full object-cover"
-            style={{ maxHeight: 320 }}
           />
         ) : (
           <div
@@ -97,6 +106,11 @@ export function ExerciseDetailPage({ type, exercises, currentIndex }: Props) {
               {type}
             </span>
           </div>
+        )}
+
+        {/* Bottom gradient */}
+        {(videoUrl || exercise.gifUrl) && (
+          <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/70 to-transparent pointer-events-none" />
         )}
 
         {/* Muscle group chip */}
