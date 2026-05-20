@@ -1,4 +1,4 @@
-const CACHE = "gymapp-v1.1";
+const CACHE = "gymapp-v1.10";
 const PRECACHE = ["/", "/workout/A", "/workout/B", "/workout/C"];
 
 self.addEventListener("install", (e) => {
