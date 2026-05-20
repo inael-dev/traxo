@@ -39,7 +39,7 @@ export const WEEKLY_SCHEDULE: Record<number, WorkoutType | null> = {
 };
 
 const PEXELS = (id: string) =>
-  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1`;
+  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb`;
 
 export const WORKOUT_META: Record<WorkoutType, WorkoutMeta> = {
   A: {

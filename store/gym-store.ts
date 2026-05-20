@@ -24,7 +24,8 @@ type GymState = {
   startWorkout: (type: WorkoutType) => void;
   setSessionId: (id: string) => void;
   initWeights: (weights: Record<string, number[]>) => void;
-  toggleSet: (exerciseId: string, setIndex: number, exerciseName: string, restSeconds: number) => void;
+  toggleSet: (exerciseId: string, setIndex: number) => void;
+  openRestTimer: (exerciseName: string, seconds: number) => void;
   isCompleted: (exerciseId: string, setIndex: number) => boolean;
   completedCountForExercise: (exerciseId: string) => number;
   totalCompletedInSession: () => number;
@@ -50,14 +51,13 @@ export const useGymStore = create<GymState>()(
       initWeights: (weights) =>
         set((s) => ({ weights: { ...weights, ...s.weights } })),
 
-      toggleSet: (exerciseId, setIndex, exerciseName, restSeconds) => {
+      toggleSet: (exerciseId, setIndex) => {
         const already = get().isCompleted(exerciseId, setIndex);
         if (already) {
           set((s) => ({
             completedSets: s.completedSets.filter(
               (c) => !(c.exerciseId === exerciseId && c.setIndex === setIndex)
             ),
-            timer: null,
           }));
         } else {
           set((s) => ({
@@ -65,10 +65,12 @@ export const useGymStore = create<GymState>()(
               ...s.completedSets,
               { exerciseId, setIndex, timestamp: Date.now() },
             ],
-            timer: { exerciseName, seconds: restSeconds },
           }));
         }
       },
+
+      openRestTimer: (exerciseName, seconds) =>
+        set({ timer: { exerciseName, seconds } }),
 
       isCompleted: (exerciseId, setIndex) =>
         get().completedSets.some(

@@ -1,3 +1,5 @@
+"use client";
+import Image from "next/image";
 import Link from "next/link";
 import { Dumbbell, ChevronRight } from "lucide-react";
 import { BottomNav } from "@/components/bottom-nav";
@@ -9,6 +11,7 @@ import type { WorkoutType } from "@/lib/data/types";
 const ALL_WORKOUTS: WorkoutType[] = ["A", "B", "C"];
 
 export default function HomePage() {
+  // Runs client-side → device timezone, not server UTC
   const todayWorkout = getTodayWorkout();
   const dateStr = formatTodayDate();
 
@@ -62,23 +65,21 @@ function TodayCard({ type }: { type: WorkoutType }) {
   return (
     <Link href={`/workout/${type}`}>
       <div className="relative rounded-[20px] overflow-hidden h-52 active:scale-[0.98] transition-transform">
-        {/* Foto de fundo */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src={meta.imageUrl}
           alt=""
-          className="absolute inset-0 w-full h-full object-cover"
+          fill
+          sizes="(max-width: 640px) 100vw, 640px"
+          className="object-cover"
           style={{ filter: "brightness(0.45)" }}
+          priority
         />
-        {/* Tint da cor do treino */}
         <div
           className="absolute inset-0"
           style={{ backgroundColor: meta.accentColor + "55" }}
         />
-        {/* Gradiente inferior para legibilidade */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
 
-        {/* Conteúdo */}
         <div className="absolute inset-0 p-5 flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-widest text-white/80">
@@ -113,31 +114,25 @@ function WorkoutCard({ type, isToday }: { type: WorkoutType; isToday: boolean })
       <div
         className="relative rounded-[16px] overflow-hidden h-[88px] flex items-stretch active:scale-[0.98] transition-transform border border-white/5"
       >
-        {/* Fundo escuro base */}
         <div className="absolute inset-0 bg-card" />
 
-        {/* Foto à direita com fade */}
         <div className="absolute right-0 top-0 bottom-0 w-40 overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={meta.imageUrl}
             alt=""
-            className="w-full h-full object-cover"
+            fill
+            sizes="160px"
+            className="object-cover"
             style={{ filter: "brightness(0.5)" }}
           />
-          {/* Fade esquerda */}
           <div
             className="absolute inset-y-0 left-0 w-20"
-            style={{
-              background: `linear-gradient(to right, var(--card, #1a1a1a), transparent)`,
-            }}
+            style={{ background: `linear-gradient(to right, var(--card, #1a1a1a), transparent)` }}
           />
         </div>
 
-        {/* Barra de cor lateral */}
         <div className="relative w-[3px] shrink-0 z-10" style={{ backgroundColor: meta.accentColor }} />
 
-        {/* Texto */}
         <div className="relative flex items-center px-4 flex-1 min-w-0 z-10">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-0.5">

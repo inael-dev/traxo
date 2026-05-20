@@ -1,6 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
@@ -18,27 +19,6 @@ type Props = {
   muscleGroups: string[];
 };
 
-function Mountain({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 375 130"
-      preserveAspectRatio="xMidYMax meet"
-      className={className}
-      aria-hidden
-    >
-      <path
-        d="M0,130 L55,72 L105,100 L165,38 L225,82 L285,48 L345,78 L375,62 L375,130 Z"
-        fill="currentColor"
-        opacity="0.35"
-      />
-      <path
-        d="M0,130 L85,88 L135,108 L195,60 L255,95 L315,65 L375,88 L375,130 Z"
-        fill="currentColor"
-        opacity="0.2"
-      />
-    </svg>
-  );
-}
 
 export function WorkoutSession({ type, exercises, muscleGroups }: Props) {
   const router = useRouter();
@@ -47,7 +27,8 @@ export function WorkoutSession({ type, exercises, muscleGroups }: Props) {
   const initWeights = useGymStore((s) => s.initWeights);
   const sessionId = useGymStore((s) => s.sessionId);
   const activeWorkout = useGymStore((s) => s.activeWorkout);
-  const totalCompleted = useGymStore((s) => s.totalCompletedInSession);
+  const completedSets = useGymStore((s) => s.completedSets.length);
+
   const meta = WORKOUT_META[type];
 
   useEffect(() => {
@@ -59,7 +40,6 @@ export function WorkoutSession({ type, exercises, muscleGroups }: Props) {
   }, [type]);
 
   const totalSets = exercises.reduce((acc, e) => acc + e.sets, 0);
-  const completedSets = totalCompleted();
   const progress = totalSets > 0 ? (completedSets / totalSets) * 100 : 0;
 
   const groups = muscleGroups.map((group) => ({
@@ -74,39 +54,39 @@ export function WorkoutSession({ type, exercises, muscleGroups }: Props) {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      {/* Hero colorido */}
-      <div
-        className="relative overflow-hidden pt-12 pb-10 px-5"
-        style={{ backgroundColor: meta.accentColor }}
-      >
-        {/* Foto de fundo */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+      {/* Header */}
+      <div className="relative overflow-hidden pt-12 pb-8 px-5">
+        <Image
           src={meta.imageUrl}
           alt=""
-          className="absolute inset-0 w-full h-full object-cover opacity-35"
-          style={{ filter: "brightness(0.5)" }}
+          fill
+          sizes="100vw"
+          className="object-cover"
+          style={{ filter: "brightness(0.3)" }}
+          priority
         />
-        <Mountain className="absolute bottom-0 left-0 right-0 w-full text-white" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/60" />
 
-        <div className="relative flex items-center justify-between mb-8">
+        <div className="relative flex items-center justify-between mb-6">
           <Link
             href="/"
-            className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center active:bg-white/30"
+            className="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center active:bg-white/25"
           >
             <ArrowLeft size={18} className="text-white" />
           </Link>
-          <span className="text-white/80 text-sm font-medium tabular-nums">
+          <span className="text-white/70 text-sm font-medium tabular-nums">
             {completedSets}/{totalSets} séries
           </span>
         </div>
 
         <div className="relative">
-          <p className="text-white/70 text-[11px] font-bold uppercase tracking-widest mb-1">
+          <span
+            className="text-[11px] font-bold uppercase tracking-widest"
+            style={{ color: meta.accentColor }}
+          >
             {meta.label}
-          </p>
-          <h1 className="text-3xl font-black text-white leading-tight">
+          </span>
+          <h1 className="text-3xl font-black text-white leading-tight mt-0.5">
             {meta.muscleGroups.join(" & ")}
           </h1>
         </div>

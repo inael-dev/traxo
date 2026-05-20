@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
@@ -39,7 +40,7 @@ export function ExerciseDetailPage({ type, exercises, currentIndex }: Props) {
 
   function handleToggle(setIndex: number) {
     const already = isCompleted(exercise.id, setIndex);
-    toggleSet(exercise.id, setIndex, exercise.name, exercise.restSeconds);
+    toggleSet(exercise.id, setIndex);
 
     if (!sessionId) return;
     if (already) {
@@ -88,11 +89,13 @@ export function ExerciseDetailPage({ type, exercises, currentIndex }: Props) {
             className="absolute inset-0 w-full h-full object-cover"
           />
         ) : exercise.gifUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={exercise.gifUrl}
+          <Image
+            src={exercise.gifUrl!}
             alt={exercise.name}
-            className="w-full h-full object-cover"
+            fill
+            sizes="(max-width: 640px) 100vw, 640px"
+            className="object-cover"
+            unoptimized
           />
         ) : (
           <div
